@@ -1,0 +1,103 @@
+trading-strategy-framework/
+│
+├── README.md
+├── requirements.txt
+├── setup.py
+├── .gitignore
+├── config/
+│   ├── __init__.py
+│   ├── strategy_configs.yaml
+│   ├── backtest_configs.yaml
+│   └── data_configs.yaml
+│
+├── src/
+│   ├── __init__.py
+│   │
+│   ├── data/
+│   │   ├── __init__.py
+│   │   ├── downloaders.py      # Data acquisition
+│   │   ├── preprocessors.py    # Data cleaning/preparation
+│   │   └── validators.py       # Data quality checks
+│   │
+│   ├── indicators/
+│   │   ├── __init__.py
+│   │   ├── base.py             # Base indicator class
+│   │   ├── moving_averages.py  # MA, EMA, SMA
+│   │   ├── volatility.py       # ATR, Bollinger, MABW
+│   │   ├── momentum.py         # RSI, MACD, etc.
+│   │   └── custom.py           # Custom indicators
+│   │
+│   ├── signals/
+│   │   ├── __init__.py
+│   │   ├── base.py             # Base signal generator
+│   │   ├── mabw_strategy.py    # MABW breakout signals
+│   │   ├── mean_reversion.py   # Actual mean-reversion signals
+│   │   └── trend_following.py  # Trend-following signals
+│   │
+│   ├── backtest/
+│   │   ├── __init__.py
+│   │   ├── engine.py           # Core backtest engine
+│   │   ├── portfolio.py        # Portfolio management
+│   │   ├── execution.py        # Order execution & slippage
+│   │   ├── position.py         # Position tracking
+│   │   └── costs.py            # Commission & slippage models
+│   │
+│   ├── risk/
+│   │   ├── __init__.py
+│   │   ├── position_sizing.py  # Position sizing methods
+│   │   ├── stop_loss.py        # Stop loss logic
+│   │   └── exposure.py         # Portfolio exposure management
+│   │
+│   ├── analytics/
+│   │   ├── __init__.py
+│   │   ├── metrics.py          # Performance metrics
+│   │   ├── statistics.py       # Statistical analysis
+│   │   └── attribution.py      # Performance attribution
+│   │
+│   ├── visualization/
+│   │   ├── __init__.py
+│   │   ├── portfolio_plots.py  # Portfolio performance charts
+│   │   ├── signal_plots.py     # Signal visualization
+│   │   ├── trade_plots.py      # Trade analysis charts
+│   │   └── reports.py          # QuantStats integration
+│   │
+│   └── utils/
+│       ├── __init__.py
+│       ├── logger.py           # Logging utilities
+│       ├── helpers.py          # Helper functions
+│       └── constants.py        # Constants
+│
+├── strategies/
+│   ├── __init__.py
+│   ├── mabw_breakout.py        # MABW strategy implementation
+│   ├── rsi_mean_reversion.py  # Example: RSI mean-reversion
+│   └── moving_average_cross.py # Example: MA crossover
+│
+├── notebooks/
+│   ├── 01_data_exploration.ipynb
+│   ├── 02_indicator_development.ipynb
+│   ├── 03_strategy_backtest.ipynb
+│   └── 04_optimization.ipynb
+│
+├── tests/
+│   ├── __init__.py
+│   ├── test_indicators.py
+│   ├── test_signals.py
+│   ├── test_backtest.py
+│   └── test_portfolio.py
+│
+├── examples/
+│   ├── run_mabw_strategy.py
+│   ├── run_custom_strategy.py
+│   └── optimize_parameters.py
+│
+├── results/
+│   ├── backtests/
+│   ├── reports/
+│   └── figures/
+│
+└── docs/
+    ├── getting_started.md
+    ├── creating_strategies.md
+    ├── api_reference.md
+    └── examples.md
