@@ -1,4 +1,4 @@
-"""Performance metrics calculations (all pure functions)."""
+"""Performance metrics calculations """
 import numpy as np
 import pandas as pd
 from typing import Dict
@@ -94,13 +94,13 @@ def calculate_cumulative_returns(returns_series: pd.Series) -> pd.Series:
 
 
 def calculate_drawdown_series(equity_curve: pd.Series) -> pd.Series:
-    """Drawdown series (pure function)."""
+    """Drawdown series ."""
     running_max = equity_curve.expanding().max()
     return (equity_curve - running_max) / running_max
 
 def calculate_all_metrics(portfolio: Dict, initial_capital: float) -> Dict:
     """
-    Calculate all performance metrics (pure function).
+    Calculate all performance metrics .
     
     Returns dict with all metrics.
     """

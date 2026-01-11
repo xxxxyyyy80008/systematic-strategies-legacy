@@ -1,4 +1,4 @@
-"""Data downloading and preprocessing (pure functions)."""
+"""Data downloading and preprocessing."""
 from typing import Dict, List, Optional, Set
 import pandas as pd
 import yfinance as yf
@@ -65,7 +65,7 @@ def download_multiple(tickers: List[str], start_date: str,
 
 
 def find_common_dates(dataframes: List[pd.DataFrame]) -> Set:
-    """Find common dates across DataFrames (pure function)."""
+    """Find common dates across DataFrames ."""
     if not dataframes:
         return set()
     
@@ -75,7 +75,7 @@ def find_common_dates(dataframes: List[pd.DataFrame]) -> Set:
 
 def align_data(data_dict: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
     """
-    Align all DataFrames to common dates (pure function).
+    Align all DataFrames to common dates .
     
     Returns new dict with aligned data.
     """
@@ -94,7 +94,7 @@ def align_data(data_dict: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
 
 
 def validate_ohlcv(df: pd.DataFrame) -> bool:
-    """Validate OHLCV data (pure function)."""
+    """Validate OHLCV data ."""
     required = ['Open', 'High', 'Low', 'Close', 'Volume']
     
     if not all(col in df.columns for col in required):

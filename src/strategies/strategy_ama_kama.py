@@ -91,7 +91,7 @@ class AMAKAMAStrategy(Strategy):
     
     def generate_signals(self, data: pd.DataFrame) -> List[Signal]:
         """
-        Generate AMA-KAMA signals (pure function).
+        Generate AMA-KAMA signals .
         
         Entry: AMA crosses above EMA + RSI < 35
         Exit: AMA crosses below EMA + RSI > 65

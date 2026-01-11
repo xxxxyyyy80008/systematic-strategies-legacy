@@ -102,7 +102,7 @@ class StochasticMACDStrategy(Strategy):
     
     def generate_signals(self, data: pd.DataFrame) -> List[Signal]:
         """
-        Generate Stochastic MACD signals (pure function).
+        Generate Stochastic MACD signals .
         
         Entry: STMACD crosses above Signal line
         Exit: STMACD crosses below Signal line

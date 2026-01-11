@@ -92,7 +92,7 @@ class BollingerBandsStrategy(Strategy):
     
     def generate_signals(self, data: pd.DataFrame) -> List[Signal]:
         """
-        Generate Bollinger Bands signals (pure function).
+        Generate Bollinger Bands signals .
         
         Entry: Bullish Engulfing + BBands Bounce (+ optional RSI)
         Exit: Price breaks above upper band

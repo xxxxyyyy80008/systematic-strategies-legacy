@@ -1,4 +1,4 @@
-"""Trade execution and cost calculations (pure functions)."""
+"""Trade execution and cost calculations"""
 from typing import Dict, Tuple, Optional, List
 import pandas as pd
 from .types_core import Trade, PositionSide, TradeConfig
@@ -6,7 +6,7 @@ from .types_core import Trade, PositionSide, TradeConfig
 
 def calculate_slippage(price: float, quantity: float, side: str,
                       pct_slippage: float, fixed_slippage: float) -> float:
-    """Calculate slippage-adjusted price (pure function)."""
+    """Calculate slippage-adjusted price ."""
     pct_component = price * pct_slippage
     fixed_component = fixed_slippage * (abs(quantity) ** 0.5)
     total_slippage = pct_component + fixed_component
@@ -19,21 +19,21 @@ def calculate_slippage(price: float, quantity: float, side: str,
 
 def calculate_slippage_cost(price: float, quantity: float,
                            pct: float, fixed: float) -> float:
-    """Calculate dollar cost of slippage (pure function)."""
+    """Calculate dollar cost of slippage ."""
     pct_component = price * pct
     fixed_component = fixed * (abs(quantity) ** 0.5)
     return (pct_component + fixed_component) * abs(quantity)
 
 
 def calculate_commission(position_value: float, commission_pct: float) -> float:
-    """Calculate commission (pure function)."""
+    """Calculate commission ."""
     return position_value * commission_pct
 
 
 def calculate_trade_costs(price: float, shares: float, side: str,
                          config: TradeConfig) -> Tuple[float, float, float]:
     """
-    Calculate all trade costs (pure function).
+    Calculate all trade costs .
     
     Returns:
         Tuple of (execution_price, commission, slippage_cost)

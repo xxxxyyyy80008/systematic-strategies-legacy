@@ -53,7 +53,7 @@ class MABWStrategy(Strategy):
     
     def generate_signals(self, data: pd.DataFrame) -> List[Signal]:
         """
-        Generate MABW signals (pure function).
+        Generate MABW signals .
         
         Entry: EMA crosses above MAB_UPPER + MAB_WIDTH is at LLV
         Exit: MAB_WIDTH crosses above critical level

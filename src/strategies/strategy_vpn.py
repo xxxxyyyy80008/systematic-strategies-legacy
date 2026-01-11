@@ -60,7 +60,7 @@ class VPNStrategy(Strategy):
     
     def generate_signals(self, data: pd.DataFrame) -> List[Signal]:
         """
-        Generate VPN signals (pure function).
+        Generate VPN signals .
         
         Entry: VPN crosses above critical + RSI < max + Price > MA
         Exit: VPN crosses below MA + RSI > min

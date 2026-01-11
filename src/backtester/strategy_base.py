@@ -26,7 +26,6 @@ class Strategy(ABC):
         """
         Generate trading signals from data.
         
-        Pure function - no side effects.
         """
         pass
     
@@ -51,30 +50,30 @@ def create_signal(ticker: str, date: pd.Timestamp, signal_type: int,
 
 
 def detect_crossover_above(df: pd.DataFrame, col1: str, col2: str) -> pd.Series:
-    """Detect when col1 crosses above col2 (pure function)."""
+    """Detect when col1 crosses above col2 ."""
     return (df[col1] > df[col2]) & (df[col1].shift(1) <= df[col2].shift(1))
 
 
 def detect_crossover_below(df: pd.DataFrame, col1: str, col2: str) -> pd.Series:
-    """Detect when col1 crosses below col2 (pure function)."""
+    """Detect when col1 crosses below col2 ."""
     return (df[col1] < df[col2]) & (df[col1].shift(1) >= df[col2].shift(1))
 
 
 def detect_threshold_cross_above(df: pd.DataFrame, col: str, threshold: float) -> pd.Series:
-    """Detect when column crosses above threshold (pure function)."""
+    """Detect when column crosses above threshold ."""
     return (df[col] >= threshold) & (df[col].shift(1) < threshold)
 
 
 def detect_threshold_cross_below(df: pd.DataFrame, col: str, threshold: float) -> pd.Series:
-    """Detect when column crosses below threshold (pure function)."""
+    """Detect when column crosses below threshold ."""
     return (df[col] < threshold) & (df[col].shift(1) >= threshold)
 
 
 def is_at_lowest(df: pd.DataFrame, col: str, period: int) -> pd.Series:
-    """Check if column is at lowest value in period (pure function)."""
+    """Check if column is at lowest value in period ."""
     return df[col].rolling(window=period, min_periods=period).min() == df[col]
 
 
 def is_at_highest(df: pd.DataFrame, col: str, period: int) -> pd.Series:
-    """Check if column is at highest value in period (pure function)."""
+    """Check if column is at highest value in period ."""
     return df[col].rolling(window=period, min_periods=period).max() == df[col]
