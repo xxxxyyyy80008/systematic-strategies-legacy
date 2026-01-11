@@ -1,103 +1,106 @@
-trading-strategy-framework/
-│
-├── README.md
-├── requirements.txt
-├── setup.py
-├── .gitignore
-├── config/
-│   ├── __init__.py
-│   ├── strategy_configs.yaml
-│   ├── backtest_configs.yaml
-│   └── data_configs.yaml
-│
-├── src/
-│   ├── __init__.py
-│   │
-│   ├── data/
-│   │   ├── __init__.py
-│   │   ├── downloaders.py      # Data acquisition
-│   │   ├── preprocessors.py    # Data cleaning/preparation
-│   │   └── validators.py       # Data quality checks
-│   │
-│   ├── indicators/
-│   │   ├── __init__.py
-│   │   ├── base.py             # Base indicator class
-│   │   ├── moving_averages.py  # MA, EMA, SMA
-│   │   ├── volatility.py       # ATR, Bollinger, MABW
-│   │   ├── momentum.py         # RSI, MACD, etc.
-│   │   └── custom.py           # Custom indicators
-│   │
-│   ├── signals/
-│   │   ├── __init__.py
-│   │   ├── base.py             # Base signal generator
-│   │   ├── mabw_strategy.py    # MABW breakout signals
-│   │   ├── mean_reversion.py   # Actual mean-reversion signals
-│   │   └── trend_following.py  # Trend-following signals
-│   │
-│   ├── backtest/
-│   │   ├── __init__.py
-│   │   ├── engine.py           # Core backtest engine
-│   │   ├── portfolio.py        # Portfolio management
-│   │   ├── execution.py        # Order execution & slippage
-│   │   ├── position.py         # Position tracking
-│   │   └── costs.py            # Commission & slippage models
-│   │
-│   ├── risk/
-│   │   ├── __init__.py
-│   │   ├── position_sizing.py  # Position sizing methods
-│   │   ├── stop_loss.py        # Stop loss logic
-│   │   └── exposure.py         # Portfolio exposure management
-│   │
-│   ├── analytics/
-│   │   ├── __init__.py
-│   │   ├── metrics.py          # Performance metrics
-│   │   ├── statistics.py       # Statistical analysis
-│   │   └── attribution.py      # Performance attribution
-│   │
-│   ├── visualization/
-│   │   ├── __init__.py
-│   │   ├── portfolio_plots.py  # Portfolio performance charts
-│   │   ├── signal_plots.py     # Signal visualization
-│   │   ├── trade_plots.py      # Trade analysis charts
-│   │   └── reports.py          # QuantStats integration
-│   │
-│   └── utils/
-│       ├── __init__.py
-│       ├── logger.py           # Logging utilities
-│       ├── helpers.py          # Helper functions
-│       └── constants.py        # Constants
-│
-├── strategies/
-│   ├── __init__.py
-│   ├── mabw_breakout.py        # MABW strategy implementation
-│   ├── rsi_mean_reversion.py  # Example: RSI mean-reversion
-│   └── moving_average_cross.py # Example: MA crossover
-│
-├── notebooks/
-│   ├── 01_data_exploration.ipynb
-│   ├── 02_indicator_development.ipynb
-│   ├── 03_strategy_backtest.ipynb
-│   └── 04_optimization.ipynb
-│
-├── tests/
-│   ├── __init__.py
-│   ├── test_indicators.py
-│   ├── test_signals.py
-│   ├── test_backtest.py
-│   └── test_portfolio.py
-│
-├── examples/
-│   ├── run_mabw_strategy.py
-│   ├── run_custom_strategy.py
-│   └── optimize_parameters.py
-│
-├── results/
-│   ├── backtests/
-│   ├── reports/
-│   └── figures/
-│
-└── docs/
-    ├── getting_started.md
-    ├── creating_strategies.md
-    ├── api_reference.md
-    └── examples.md
+
+# ============================================================================
+# EXAMPLE: AMA-KAMA STRATEGY
+# ============================================================================
+
+def get_ama_kama_param_space() -> Dict[str, Tuple]:
+    return {
+        'ama_period': ('int', 5, 20),
+        'ama_fast': ('int', 2, 5),
+        'ama_slow': ('int', 20, 40),
+        'kama_er_period': ('int', 5, 20),
+        'kama_fast': ('int', 2, 5),
+        'kama_slow': ('int', 20, 40),
+        'kama_period': ('int', 10, 30),
+        'ema_period': ('int', 10, 50),
+        'rsi_period': ('int', 7, 21),
+        'rsi_entry_max': ('int', 25, 45),
+        'rsi_exit_min': ('int', 55, 75),
+        'atr_period': ('int', 10, 20),
+        'atr_multiplier': ('float', 1.5, 3.0)
+    }
+
+
+def run_ama_kama_walkforward(data_dict: Dict[str, pd.DataFrame],
+                             trade_config: TradeConfig,
+                             wf_config: Dict = None,
+                             verbose: bool = True) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    
+    from backtester.strategies.ama_kama_strategy import AMAKAMAStrategy
+    
+    if wf_config is None:
+        wf_config = create_wf_config()
+    
+    param_space = get_ama_kama_param_space()
+    
+    results_df, studies = walk_forward_analysis(
+        data_dict=data_dict,
+        param_space=param_space,
+        strategy_class=AMAKAMAStrategy,
+        strategy_name="AMA_KAMA",
+        trade_config=trade_config,
+        wf_config=wf_config,
+        objective_weights=(0.35, 0.65),
+        verbose=verbose
+    )
+    
+    sensitivity_df = calculate_param_importance(studies)
+    
+    if verbose and not sensitivity_df.empty:
+        print("\n" + "="*80)
+        print("PARAMETER IMPORTANCE")
+        print("="*80)
+        importance = aggregate_param_importance(sensitivity_df)
+        print("\n", importance.to_string())
+        
+        distributions = get_param_distributions(studies, top_n=5)
+        print("\nTOP PARAMETER DISTRIBUTIONS:")
+        for param, stats in distributions.items():
+            print(f"\n{param}:")
+            print(f"  Mean: {stats['mean']:.2f}")
+            print(f"  Std:  {stats['std']:.2f}")
+            print(f"  Range: [{stats['min']:.2f}, {stats['max']:.2f}]")
+    
+    export_results(results_df, sensitivity_df, studies)
+    
+    return results_df, sensitivity_df
+
+
+# ============================================================================
+# USAGE EXAMPLE
+# ============================================================================
+
+if __name__ == "__main__":
+    
+    # Load data
+    data_dict = {
+        'SPY': pd.read_csv('spy_data.csv', index_col='Date', parse_dates=True),
+        'QQQ': pd.read_csv('qqq_data.csv', index_col='Date', parse_dates=True),
+    }
+    
+    # Configure
+    trade_config = TradeConfig(
+        initial_capital=100000,
+        position_size_pct=0.1,
+        max_positions=5,
+        commission_pct=0.001,
+        slippage_pct=0.0005,
+        slippage_fixed=0.0,
+        max_trade_size=50000,
+        min_trade_size=1000
+    )
+    
+    wf_config = create_wf_config(
+        training_days=252,
+        testing_days=63,
+        holdout_days=21,
+        min_trades=10,
+        n_trials=100,
+        n_jobs=-1,
+        timeout=3600
+    )
+    
+    # Run analysis
+    results, sensitivity = run_ama_kama_walkforward(
+        data_dict, trade_config, wf_config, verbose=True
+    )
