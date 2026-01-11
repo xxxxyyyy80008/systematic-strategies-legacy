@@ -56,9 +56,9 @@ def download_multiple(tickers: List[str], start_date: str,
         
         if df is not None:
             results[ticker] = df
-            print(f"✓ {len(df)} bars")
+            print(f" {len(df)} bars")
         else:
-            print("✗ Failed")
+            print(" Failed")
     
     print(f"Successfully downloaded {len(results)}/{len(tickers)} tickers\n")
     return results
