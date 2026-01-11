@@ -1,0 +1,51 @@
+# AMA-KAMA Strategy Configuration
+# Adaptive Moving Average + Kaufman Adaptive Moving Average
+
+name: "AMA_KAMA"
+description: "Adaptive Moving Average crossover strategy with RSI filter"
+
+parameters:
+  # AMA Parameters
+  ama_period: 10
+  ama_fast: 2
+  ama_slow: 30
+  
+  # KAMA Parameters (for analysis/comparison)
+  kama_er_period: 10
+  kama_fast: 2
+  kama_slow: 30
+  kama_period: 20
+  
+  # EMA Parameters (crossover reference)
+  ema_period: 20
+  
+  # RSI Filter Parameters
+  rsi_period: 14
+  rsi_entry_max: 35      # Enter when RSI < 35 (oversold)
+  rsi_exit_min: 65       # Exit when RSI > 65 (overbought)
+  
+  # ATR for Stops (optional)
+  atr_period: 14
+  atr_multiplier: 2.0
+
+# Tickers to trade
+tickers:
+  - "SPY"
+  - "QQQ"
+  - "IWM"
+  - "DIA"
+  - "AAPL"
+  - "MSFT"
+  - "GOOGL"
+  - "AMZN"
+  - "NVDA"
+  - "META"
+  - "TSLA"
+  - "AMD"
+
+# Trading Configuration
+trade_config:
+  initial_capital: 100000
+  position_size: 0.1        # 10% of capital per position
+  max_positions: 5
+  commission: 0.001         # 0.1% commission

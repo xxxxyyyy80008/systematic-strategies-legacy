@@ -1,0 +1,58 @@
+# VPN Strategy Configuration
+# Based on TASC APR 2021: "Detecting High-Volume Breakouts"
+
+
+name: "VPN_High_Volume_Breakouts"
+description: "Volume Pressure Number strategy for detecting high-volume breakouts"
+
+parameters:
+    # VPN Indicator Parameters
+    vpn_period: 30              # Period for VPN calculation
+    vpn_smooth: 3               # EMA smoothing period for VPN
+    vpn_ma_period: 30           # Moving average period for VPN signal line
+    vpn_critical: 5.0           # Critical level for VPN entry signal
+
+    # RSI Parameters
+    rsi_period: 14              # RSI calculation period
+    rsi_max_value: 70           # Maximum RSI for entry (avoid overbought)
+    rsi_min_value: 30           # Minimum RSI for exit (confirm momentum)
+
+    # Price Moving Average Parameters
+    price_ma_period: 50         # Moving average period for price trend
+    price_ma_type: "sma"        # Type: 'sma' or 'ema'
+
+    # Risk Management Parameters
+    atr_period: 14              # ATR calculation period
+    atr_multiplier: 2.0         # ATR multiplier for stop-loss
+
+trade_config:
+  initial_capital: 100000       # Starting capital ($100,000)
+  position_size: 0.20           # 20% of capital per position
+  max_positions: 5              # Maximum concurrent positions
+  commission: 0.001             # 0.1% commission per trade
+  slippage: 0.0005             # 0.05% slippage
+
+# Backtest Settings
+backtest:
+  start_date: "2020-01-01"
+  end_date: null                # null = use latest available
+  
+# Tickers to test
+tickers:
+  - "AAPL"
+  - "MSFT"
+  - "GOOGL"
+  - "AMZN"
+  - "META"
+  - "NVDA"
+  - "TSLA"
+  - "AMD"
+  - "NFLX"
+  - "SPY"
+
+# Output Settings
+output:
+  save_trades: true
+  save_metrics: true
+  output_dir: "results/vpn_strategy"
+  plot_results: true

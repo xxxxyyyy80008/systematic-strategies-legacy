@@ -1,0 +1,48 @@
+# Bollinger Bands Breakout Strategy Configuration
+# Entry: Bullish Engulfing + BBands Bounce
+# Exit: Price breaks above upper band
+
+name: "BOLLINGER_BANDS"
+description: "Bollinger Bands bounce strategy with candlestick pattern confirmation"
+
+parameters:
+  # Bollinger Bands Parameters
+  bb_period: 20
+  bb_std_dev: 2.0
+  
+  # Entry Pattern Requirements
+  require_engulfing: true        # Require Bullish Engulfing pattern
+  
+  # RSI Filter (Optional)
+  use_rsi_filter: false          # Set to true to enable RSI filter
+  rsi_period: 14
+  rsi_oversold: 30               # Enter when RSI < 30 (if enabled)
+  
+  # Stop Loss (ATR-based)
+  atr_period: 14
+  atr_stop_multiplier: 2.0       # Stop = Entry - (2.0 * ATR)
+
+# Tickers to trade
+tickers:
+  - "SPY"
+  - "QQQ"
+  - "IWM"
+  - "DIA"
+  - "AAPL"
+  - "MSFT"
+  - "GOOGL"
+  - "AMZN"
+  - "NVDA"
+  - "META"
+  - "TSLA"
+  - "AMD"
+  - "NFLX"
+  - "CRM"
+  - "ADBE"
+
+# Trading Configuration
+trade_config:
+  initial_capital: 100000
+  position_size: 0.1            # 10% of capital per position
+  max_positions: 5
+  commission: 0.001             # 0.1% commission

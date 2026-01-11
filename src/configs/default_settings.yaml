@@ -1,0 +1,28 @@
+# Default backtester settings
+
+data:
+  source: "yfinance"
+  start_date: "2020-01-01"
+  end_date: null  # null = today
+
+trade:
+  initial_capital: 100000
+  commission_pct: 0.001        # 0.1%
+  slippage_pct: 0.0005         # 0.05%
+  slippage_fixed: 0.01         # $0.01 per share
+  position_size_pct: 0.95      # Use 95% of available capital
+  max_trade_size: 50000        # Max $50k per trade
+  min_trade_size: 100          # Min $100 per trade
+
+execution:
+  mode: "next_day"             # Execute on next day after signal
+  price_type: "open"           # Use open price
+
+portfolio:
+  capital_allocation: "per_ticker"  # Equal capital per ticker
+  max_positions: 10
+
+reporting:
+  output_dir: "results/"
+  export_csv: true
+  generate_charts: true

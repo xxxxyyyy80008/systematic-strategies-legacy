@@ -1,0 +1,56 @@
+# Stochastic MACD Oscillator Strategy Configuration
+# Entry: STMACD crosses above Signal line
+# Exit: STMACD crosses below Signal line
+
+name: "STOCHASTIC_MACD"
+description: "Stochastic MACD Oscillator crossover strategy with normalized momentum signals"
+
+parameters:
+  # Stochastic MACD Parameters
+  period: 45                     # Period for highest high/lowest low
+  fast_period: 12                # Fast EMA period
+  slow_period: 26                # Slow EMA period
+  signal_period: 9               # Signal line EMA period
+  
+  # Overbought/Oversold Levels
+  overbought: 10                 # Overbought threshold
+  oversold: -10                  # Oversold threshold
+  
+  # Optional Filters
+  use_threshold_filter: true     # Only enter when not overbought
+  use_trend_filter: false        # Require price > EMA for entry
+  trend_ema_period: 50           # Trend filter EMA period
+  
+  # RSI Confirmation (Optional)
+  use_rsi_filter: false          # Enable RSI momentum filter
+  rsi_period: 14
+  rsi_threshold: 50              # Enter when RSI > 50
+  
+  # Risk Management (ATR-based stops)
+  atr_period: 14
+  atr_stop_multiplier: 2.0       # Stop = Entry - (2.0 * ATR)
+
+# Tickers to trade
+tickers:
+  - "SPY"
+  - "QQQ"
+  - "IWM"
+  - "DIA"
+  - "AAPL"
+  - "MSFT"
+  - "GOOGL"
+  - "AMZN"
+  - "NVDA"
+  - "META"
+  - "TSLA"
+  - "AMD"
+  - "NFLX"
+  - "ADBE"
+  - "CRM"
+
+# Trading Configuration
+trade_config:
+  initial_capital: 100000
+  position_size: 0.1            # 10% of capital per position
+  max_positions: 5
+  commission: 0.001             # 0.1% commission
