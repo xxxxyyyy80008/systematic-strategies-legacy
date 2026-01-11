@@ -1,7 +1,7 @@
 """Data downloading and preprocessing (pure functions)."""
 from typing import Dict, List, Optional, Set
 import pandas as pd
-import yfinance as yf
+# import yfinance as yf
 
 
 def download_ticker(ticker: str, start_date: str, 
