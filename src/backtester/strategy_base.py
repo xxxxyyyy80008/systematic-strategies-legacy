@@ -33,11 +33,8 @@ class Strategy(ABC):
         """Validate strategy configuration."""
         return True
 
-
-# Helper functions (pure)
 def create_signal(ticker: str, date: pd.Timestamp, signal_type: int,
                  price: float, signal_name: str) -> Signal:
-    """Factory function for creating signals (pure)."""
     signal_map = {1: SignalType.ENTRY, -1: SignalType.EXIT, 0: SignalType.HOLD}
     
     return Signal(

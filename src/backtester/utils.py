@@ -7,13 +7,13 @@ from .types_core import StrategyConfig, TradeConfig
 
 
 def load_yaml(filepath: Union[str, Path]) -> Dict:
-    """Load YAML file (pure I/O function)."""
+    """Load YAML file"""
     with open(filepath, 'r') as f:
         return yaml.safe_load(f)
 
 
 def load_json(filepath: Union[str, Path]) -> Dict:
-    """Load JSON file (pure I/O function)."""
+    """Load JSON file"""
     with open(filepath, 'r') as f:
         return json.load(f)
 
@@ -31,12 +31,10 @@ def save_json(data: Dict, filepath: Union[str, Path]):
 
 
 def create_strategy_config(config_dict: Dict) -> StrategyConfig:
-    """Factory function for StrategyConfig."""
     return StrategyConfig.from_dict(config_dict)
 
 
 def create_trade_config(config_dict: Dict) -> TradeConfig:
-    """Factory function for TradeConfig."""
     return TradeConfig.from_dict(config_dict)
 
 

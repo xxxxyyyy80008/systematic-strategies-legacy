@@ -7,7 +7,7 @@ import yfinance as yf
 def download_ticker(ticker: str, start_date: str, 
                    end_date: Optional[str] = None) -> Optional[pd.DataFrame]:
     """
-    Download data for single ticker (pure I/O function).
+    Download data for single ticker
     
     Args:
         ticker: Ticker symbol
