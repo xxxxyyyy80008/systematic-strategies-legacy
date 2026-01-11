@@ -11,11 +11,11 @@ from optuna.samplers import TPESampler
 import warnings
 warnings.filterwarnings('ignore')
 
-from backtester.backtest_engine import BacktestEngine
-from backtester.types_core import StrategyConfig, TradeConfig
-
+from .backtest_engine import BacktestEngine
+from .types_core import StrategyConfig, TradeConfig
 
 # CONFIGURATION
+
 def create_wf_config(training_days: int = 252,
                      testing_days: int = 63,
                      holdout_days: int = 21,
@@ -35,6 +35,7 @@ def create_wf_config(training_days: int = 252,
 
 
 # DATA FILTERING
+
 def filter_data_by_date(data_dict: Dict[str, pd.DataFrame],
                         start_date: datetime,
                         end_date: datetime) -> Dict[str, pd.DataFrame]:
@@ -89,41 +90,189 @@ def generate_windows(start_date: datetime,
     return windows
 
 
+# METRICS CALCULATION
+
+def calculate_trade_metrics(trades_df: pd.DataFrame) -> Dict:
+    if trades_df.empty:
+        return {
+            'total_trades': 0,
+            'winning_trades': 0,
+            'losing_trades': 0,
+            'win_rate': 0.0,
+            'avg_win': 0.0,
+            'avg_loss': 0.0,
+            'profit_factor': 0.0,
+            'expectancy': 0.0,
+            'total_pnl': 0.0
+        }
+    
+    # Filter only closed trades
+    closed_trades = trades_df[trades_df['action'] == 'CLOSE'].copy() if 'action' in trades_df.columns else trades_df.copy()
+    
+    if closed_trades.empty:
+        return {
+            'total_trades': 0,
+            'winning_trades': 0,
+            'losing_trades': 0,
+            'win_rate': 0.0,
+            'avg_win': 0.0,
+            'avg_loss': 0.0,
+            'profit_factor': 0.0,
+            'expectancy': 0.0,
+            'total_pnl': 0.0
+        }
+    
+    # Use net_pnl if available, otherwise calculate from pnl
+    pnl_col = 'net_pnl' if 'net_pnl' in closed_trades.columns else 'pnl'
+    
+    if pnl_col not in closed_trades.columns:
+        return {
+            'total_trades': len(closed_trades),
+            'winning_trades': 0,
+            'losing_trades': 0,
+            'win_rate': 0.0,
+            'avg_win': 0.0,
+            'avg_loss': 0.0,
+            'profit_factor': 0.0,
+            'expectancy': 0.0,
+            'total_pnl': 0.0
+        }
+    
+    pnl_values = closed_trades[pnl_col].dropna()
+    
+    if pnl_values.empty:
+        return {
+            'total_trades': len(closed_trades),
+            'winning_trades': 0,
+            'losing_trades': 0,
+            'win_rate': 0.0,
+            'avg_win': 0.0,
+            'avg_loss': 0.0,
+            'profit_factor': 0.0,
+            'expectancy': 0.0,
+            'total_pnl': 0.0
+        }
+    
+    total_trades = len(pnl_values)
+    winning_trades = len(pnl_values[pnl_values > 0])
+    losing_trades = len(pnl_values[pnl_values < 0])
+    win_rate = winning_trades / total_trades if total_trades > 0 else 0.0
+    
+    wins = pnl_values[pnl_values > 0]
+    losses = pnl_values[pnl_values < 0]
+    
+    avg_win = wins.mean() if not wins.empty else 0.0
+    avg_loss = abs(losses.mean()) if not losses.empty else 0.0
+    
+    total_wins = wins.sum() if not wins.empty else 0.0
+    total_losses = abs(losses.sum()) if not losses.empty else 0.0
+    
+    profit_factor = total_wins / total_losses if total_losses > 0 else 0.0
+    expectancy = pnl_values.mean() if not pnl_values.empty else 0.0
+    total_pnl = pnl_values.sum()
+    
+    return {
+        'total_trades': total_trades,
+        'winning_trades': winning_trades,
+        'losing_trades': losing_trades,
+        'win_rate': win_rate,
+        'avg_win': avg_win,
+        'avg_loss': avg_loss,
+        'profit_factor': profit_factor,
+        'expectancy': expectancy,
+        'total_pnl': total_pnl
+    }
+
+
+def calculate_returns_metrics(daily_values: pd.DataFrame, initial_capital: float) -> Dict:
+    if daily_values.empty or 'total_value' not in daily_values.columns:
+        return {
+            'total_return': 0.0,
+            'sharpe_ratio': 0.0,
+            'sortino_ratio': 0.0,
+            'max_drawdown': 0.0,
+            'calmar_ratio': 0.0
+        }
+    
+    values = daily_values['total_value'].values
+    returns = np.diff(values) / values[:-1]
+    
+    if len(returns) == 0:
+        return {
+            'total_return': 0.0,
+            'sharpe_ratio': 0.0,
+            'sortino_ratio': 0.0,
+            'max_drawdown': 0.0,
+            'calmar_ratio': 0.0
+        }
+    
+    total_return = ((values[-1] - initial_capital) / initial_capital) * 100
+    
+    avg_return = np.mean(returns)
+    std_return = np.std(returns)
+    sharpe_ratio = (avg_return / std_return * np.sqrt(252)) if std_return > 0 else 0.0
+    
+    downside_returns = returns[returns < 0]
+    downside_std = np.std(downside_returns) if len(downside_returns) > 0 else 0.0
+    sortino_ratio = (avg_return / downside_std * np.sqrt(252)) if downside_std > 0 else 0.0
+    
+    cumulative = np.cumprod(1 + returns)
+    running_max = np.maximum.accumulate(cumulative)
+    drawdown = (cumulative - running_max) / running_max
+    max_drawdown = abs(np.min(drawdown)) * 100
+    
+    calmar_ratio = (total_return / max_drawdown) if max_drawdown > 0 else 0.0
+    
+    return {
+        'total_return': total_return,
+        'sharpe_ratio': sharpe_ratio,
+        'sortino_ratio': sortino_ratio,
+        'max_drawdown': max_drawdown,
+        'calmar_ratio': calmar_ratio
+    }
+
+
 # BACKTEST EXECUTION
+
 def run_backtest(data_dict: Dict[str, pd.DataFrame],
                 params: Dict,
                 strategy_class: type,
                 strategy_name: str,
                 trade_config: TradeConfig) -> Dict:
+    
     strategy_config = StrategyConfig(name=strategy_name, parameters=params)
     strategy = strategy_class(strategy_config)
     engine = BacktestEngine(strategy, trade_config)
     results = engine.run(data_dict)
     
-    metrics = results.metrics
-    trades_df = results.trades
+    # Calculate metrics from trades
+    trade_metrics = calculate_trade_metrics(results.trades)
     
-    total_trades = len(trades_df) if not trades_df.empty else 0
-    winning_trades = len(trades_df[trades_df['net_pnl'] > 0]) if not trades_df.empty else 0
-    win_rate = winning_trades / total_trades if total_trades > 0 else 0.0
+    # Calculate returns metrics
+    returns_metrics = calculate_returns_metrics(results.daily_values, trade_config.initial_capital)
     
-    return {
-        'total_trades': total_trades,
-        'winning_trades': winning_trades,
-        'win_rate': win_rate,
-        'total_return': metrics.get('total_return_pct', 0.0),
-        'sharpe_ratio': metrics.get('sharpe_ratio', 0.0),
-        'max_drawdown': metrics.get('max_drawdown_pct', 0.0),
-        'profit_factor': metrics.get('profit_factor', 0.0),
-        'avg_win': metrics.get('avg_win', 0.0),
-        'avg_loss': metrics.get('avg_loss', 0.0),
-        'expectancy': metrics.get('expectancy', 0.0),
-        'sortino_ratio': metrics.get('sortino_ratio', 0.0),
-        'calmar_ratio': metrics.get('calmar_ratio', 0.0)
+    # Try to get additional metrics from results if available
+    additional_metrics = {}
+    if results.metrics:
+        try:
+            for key in ['profit_factor', 'expectancy', 'avg_win', 'avg_loss']:
+                if key in results.metrics:
+                    additional_metrics[key] = results.metrics[key]
+        except:
+            pass
+    
+    # Combine all metrics
+    combined_metrics = {
+        **trade_metrics,
+        **returns_metrics,
+        **additional_metrics
     }
+    
+    return combined_metrics
 
 
 # OBJECTIVE FUNCTION
+
 def calculate_objective(win_rate: float,
                        sharpe_ratio: float,
                        win_rate_weight: float = 0.35,
@@ -133,6 +282,7 @@ def calculate_objective(win_rate: float,
 
 
 # PARAMETER OPTIMIZATION
+
 def create_objective_function(data_dict: Dict[str, pd.DataFrame],
                              param_space: Dict[str, Tuple],
                              strategy_class: type,
@@ -172,7 +322,7 @@ def create_objective_function(data_dict: Dict[str, pd.DataFrame],
             
             return objective_value
             
-        except Exception:
+        except Exception as e:
             return -999.0
     
     return objective
@@ -229,21 +379,38 @@ def process_window(window: Dict,
     
     train_data = filter_data_by_date(data_dict, window['train_start'], window['train_end'])
     
+    if not train_data:
+        if verbose:
+            print("  Skipping: no training data")
+        return None
+    
     best_params, study = optimize_parameters(
         train_data, param_space, strategy_class, strategy_name,
         trade_config, wf_config, window_idx, objective_weights
     )
     
     if best_params is None:
+        if verbose:
+            print("  Skipping: optimization failed")
         return None
     
     if verbose:
-        print(f"Best objective: {study.best_value:.4f}")
+        print(f"  Best objective: {study.best_value:.4f}")
     
     test_data = filter_data_by_date(data_dict, window['test_start'], window['test_end'])
+    if not test_data:
+        if verbose:
+            print("  Skipping: no test data")
+        return None
+    
     test_results = run_backtest(test_data, best_params, strategy_class, strategy_name, trade_config)
     
     holdout_data = filter_data_by_date(data_dict, window['holdout_start'], window['holdout_end'])
+    if not holdout_data:
+        if verbose:
+            print("  Skipping: no holdout data")
+        return None
+    
     holdout_results = run_backtest(holdout_data, best_params, strategy_class, strategy_name, trade_config)
     
     result = {
@@ -302,11 +469,12 @@ def walk_forward_analysis(data_dict: Dict[str, pd.DataFrame],
             results.append(result)
             
             train_data = filter_data_by_date(data_dict, window['train_start'], window['train_end'])
-            _, study = optimize_parameters(
-                train_data, param_space, strategy_class, strategy_name,
-                trade_config, wf_config, i, objective_weights
-            )
-            studies.append(study)
+            if train_data:
+                _, study = optimize_parameters(
+                    train_data, param_space, strategy_class, strategy_name,
+                    trade_config, wf_config, i, objective_weights
+                )
+                studies.append(study)
     
     results_df = pd.DataFrame(results)
     
@@ -378,6 +546,7 @@ def get_param_distributions(studies: List[optuna.Study],
 
 
 # RESULTS SUMMARY
+
 def calculate_summary_stats(results_df: pd.DataFrame, prefix: str) -> Dict:
     if results_df.empty:
         return {}
@@ -419,6 +588,7 @@ def print_summary(results_df: pd.DataFrame):
 
 
 # EXPORT FUNCTIONS
+
 def export_results(results_df: pd.DataFrame,
                   sensitivity_df: pd.DataFrame,
                   studies: List[optuna.Study],
