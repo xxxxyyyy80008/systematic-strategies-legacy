@@ -257,8 +257,12 @@ def calculate_returns_metrics(daily_values: pd.DataFrame, initial_capital: float
             'calmar_ratio': 0.0
         }
     
-    returns = np.diff(values) / values[:-1]
-    returns = returns[np.isfinite(returns)]
+    # FIX: Safe division to handle cases where portfolio value is 0
+    denom = values[:-1]
+    with np.errstate(divide='ignore', invalid='ignore'):
+        returns = np.diff(values) / denom
+        # Remove NaNs and Infs resulting from division by zero
+        returns = returns[np.isfinite(returns)]
     
     if len(returns) == 0:
         return {
@@ -281,7 +285,14 @@ def calculate_returns_metrics(daily_values: pd.DataFrame, initial_capital: float
     
     cumulative = np.cumprod(1 + returns)
     running_max = np.maximum.accumulate(cumulative)
-    drawdown = (cumulative - running_max) / running_max
+    
+    # Handle potential division by zero if running_max is 0
+    with np.errstate(divide='ignore', invalid='ignore'):
+        drawdown = (cumulative - running_max) / running_max
+    
+    # Clean up any NaNs from the drawdown calculation
+    drawdown = drawdown[np.isfinite(drawdown)]
+        
     max_drawdown = abs(np.min(drawdown)) * 100 if len(drawdown) > 0 else 0.0
     
     calmar_ratio = (total_return / max_drawdown) if max_drawdown > 0 else 0.0
@@ -293,6 +304,7 @@ def calculate_returns_metrics(daily_values: pd.DataFrame, initial_capital: float
         'max_drawdown': max_drawdown,
         'calmar_ratio': calmar_ratio
     }
+
 
 
 # ============================================================================
@@ -512,7 +524,6 @@ def optimize_parameters(data_dict: Dict[str, pd.DataFrame],
 # ============================================================================
 # WINDOW PROCESSING
 # ============================================================================
-
 def process_window(window: Dict,
                   window_idx: int,
                   data_dict: Dict[str, pd.DataFrame],
@@ -522,7 +533,7 @@ def process_window(window: Dict,
                   trade_config: TradeConfig,
                   wf_config: Dict,
                   objective_weights: Tuple[float, float],
-                  verbose: bool) -> Optional[Dict]:
+                  verbose: bool) -> Tuple[Optional[Dict], Optional[optuna.Study]]:
     
     seed = wf_config.get('random_seed', 42) + window_idx
     set_random_seed(seed)
@@ -535,15 +546,17 @@ def process_window(window: Dict,
         print(f"Testing:   {window['test_start'].date()} to {window['test_end'].date()}")
         print(f"Holdout:   {window['holdout_start'].date()} to {window['holdout_end'].date()}")
     
+    # 1. Prepare Training Data
     train_data = filter_data_by_date(data_dict, window['train_start'], window['train_end'])
     if not train_data:
         if verbose:
             print("Skipping: no training data")
-        return None
+        return None, None
     
     if verbose:
         print(f"\nOptimizing parameters...")
     
+    # 2. Run Optimization (Expensive Step)
     best_params, study = optimize_parameters(
         train_data, param_space, strategy_class, strategy_name,
         trade_config, wf_config, window_idx, objective_weights
@@ -552,16 +565,17 @@ def process_window(window: Dict,
     if not best_params:
         if verbose:
             print("Skipping: optimization failed")
-        return None
+        return None, None
     
     if verbose:
         print_best_parameters(best_params, study, window_idx)
     
+    # 3. Run Out-of-Sample Test
     test_data = filter_data_by_date(data_dict, window['test_start'], window['test_end'])
     if not test_data:
         if verbose:
             print("\nSkipping: no test data")
-        return None
+        return None, None
     
     if verbose:
         print(f"\nTesting out-of-sample...")
@@ -574,11 +588,12 @@ def process_window(window: Dict,
               f"Sharpe: {test_results['sharpe_ratio']:.4f}, "
               f"Return: {test_results['total_return']:.2f}%")
     
+    # 4. Run Holdout Validation
     holdout_data = filter_data_by_date(data_dict, window['holdout_start'], window['holdout_end'])
     if not holdout_data:
         if verbose:
             print("\nSkipping: no holdout data")
-        return None
+        return None, None
     
     if verbose:
         print(f"Holdout validation...")
@@ -591,6 +606,7 @@ def process_window(window: Dict,
               f"Sharpe: {holdout_results['sharpe_ratio']:.4f}, "
               f"Return: {holdout_results['total_return']:.2f}%")
     
+    # 5. Construct Results Dictionary
     result = {
         'window': window_idx,
         'seed': seed,
@@ -608,8 +624,8 @@ def process_window(window: Dict,
     result.update({f'test_{k}': v for k, v in test_results.items() if k != 'error'})
     result.update({f'holdout_{k}': v for k, v in holdout_results.items() if k != 'error'})
     
-    return result
-
+    # Return both the result dict AND the study object
+    return result, study
 
 # ============================================================================
 # MAIN ANALYSIS
@@ -649,7 +665,8 @@ def walk_forward_analysis(data_dict: Dict[str, pd.DataFrame],
     studies = []
     
     for i, window in enumerate(windows, 1):
-        result = process_window(
+        # FIX: Unpack tuple (result, study) from the updated process_window
+        result, study = process_window(
             window, i, data_dict, param_space,
             strategy_class, strategy_name, trade_config,
             wf_config, objective_weights, verbose
@@ -657,12 +674,9 @@ def walk_forward_analysis(data_dict: Dict[str, pd.DataFrame],
         
         if result:
             results.append(result)
-            train_data = filter_data_by_date(data_dict, window['train_start'], window['train_end'])
-            if train_data:
-                _, study = optimize_parameters(
-                    train_data, param_space, strategy_class, strategy_name,
-                    trade_config, wf_config, i, objective_weights
-                )
+            # FIX: Append the returned study directly. 
+            # Do NOT call optimize_parameters here again.
+            if study:
                 studies.append(study)
     
     results_df = pd.DataFrame(results)
@@ -745,10 +759,27 @@ def analyze_param_stability(results_df: pd.DataFrame, param_name: str) -> Dict:
     if values.empty:
         return {}
     
+    # FIX: Check if the column contains numeric data
+    if not pd.api.types.is_numeric_dtype(values):
+        # Return simplified info for categorical/string parameters
+        return {
+            'parameter': param_name,
+            'mean': np.nan,
+            'median': np.nan,
+            'std': np.nan,
+            'min': np.nan,
+            'max': np.nan,
+            'cv': np.nan,
+            'trend_slope': 0.0,
+            'trend_r2': 0.0,
+            'is_stable': True  # Cannot determine stability mathematically for categories
+        }
+    
     mean_val = values.mean()
     std_val = values.std()
     cv = (std_val / mean_val) if mean_val != 0 else 0.0
     
+    # Perform linear regression only on numeric data
     from scipy import stats
     x = np.arange(len(values))
     slope, intercept, r_value, p_value, std_err = stats.linregress(x, values)
