@@ -5,7 +5,7 @@ parent: Alpha Research & Signal Generation
 nav_order: 2
 has_children: true
 has_toc: false
-permalink: /docs/alpha-research/strategies/
+permalink: /systematic-strategies-legacy/legacy/
 ---
 
 # Systematic Trading Strategies & Backtesting
