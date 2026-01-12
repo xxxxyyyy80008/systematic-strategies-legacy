@@ -96,7 +96,7 @@ class StochasticMACDStrategy(Strategy):
         )
         
         # Drop NaN rows
-        result = result.dropna()
+        # result = result.dropna()
         
         return result
     

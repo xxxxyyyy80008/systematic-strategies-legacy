@@ -54,7 +54,7 @@ class VPNStrategy(Strategy):
                            result['Close'], self.atr_period)
         
         # Drop NaN rows
-        result = result.dropna()
+        # result = result.dropna()
         
         return result
     

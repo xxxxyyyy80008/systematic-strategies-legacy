@@ -85,7 +85,7 @@ class AMAKAMAStrategy(Strategy):
         )
         
         # Drop NaN rows
-        result = result.dropna()
+        # result = result.dropna()
         
         return result
     
@@ -134,9 +134,10 @@ class AMAKAMAStrategy(Strategy):
         ama_cross_above = detect_crossover_above(data, 'AMA', 'EMA')
         
         # RSI oversold
-        rsi_oversold = data['RSI'] < self.rsi_entry_max
+        # rsi_oversold = data['RSI'] < self.rsi_entry_max
+        rsi_condition = (data['RSI'] < self.rsi_entry_max).rolling(3).max() > 0
         
-        return ama_cross_above & rsi_oversold
+        return ama_cross_above & rsi_condition
     
     def _detect_exit(self, data: pd.DataFrame) -> pd.Series:
         """Detect exit conditions (pure helper)."""
