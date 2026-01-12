@@ -94,6 +94,8 @@ class BacktestEngine:
                         pending['signal_date'], date, self.config
                     )
                     del pending_exits[ticker]
+                else:
+                    del pending_exits[ticker]
             
             # Execute pending entries
             for ticker in list(pending_entries.keys()):
@@ -103,6 +105,8 @@ class BacktestEngine:
                         portfolio, ticker, current_prices[ticker],
                         pending['signal_date'], date, self.config
                     )
+                    del pending_entries[ticker]
+                else:
                     del pending_entries[ticker]
             
             # Process today's signals

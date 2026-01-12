@@ -28,9 +28,10 @@ def calculate_position_size(available_capital: float, price: float,
 def calculate_shares(target_size: float, price: float, commission_pct: float,
                      slippage_pct: float) -> float:
     """Calculate shares accounting for costs ."""
-    total_cost_factor = 1 + commission_pct + slippage_pct
+    safety_buffer = 0.02 
+    total_cost_factor = 1 + commission_pct + slippage_pct + safety_buffer
     return target_size / (price * total_cost_factor)
-
+    
 
 def initialize_portfolio(tickers: list, capital_per_ticker: float) -> Dict:
     """

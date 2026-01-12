@@ -92,7 +92,7 @@ def execute_entry(portfolio: Dict, ticker: str, price: float,
     )
     
     # Total cost
-    total_cost = (shares * exec_price) + commission + slippage
+    total_cost = (shares * exec_price) + commission
     
     if total_cost > account['available_capital']:
         return None
@@ -150,10 +150,10 @@ def execute_exit(portfolio: Dict, ticker: str, price: float,
     
     # Calculate P&L
     gross_pnl = shares * (exec_price - entry_price)
-    net_pnl = gross_pnl - commission - slippage
+    net_pnl = gross_pnl - commission
     
     # Update account
-    proceeds = (shares * exec_price) - commission - slippage
+    proceeds = (shares * exec_price) - commission
     account['available_capital'] += proceeds
     account['total_pnl'] += net_pnl
     account['position'] = None
