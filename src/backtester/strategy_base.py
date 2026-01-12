@@ -58,7 +58,7 @@ def detect_crossover_below(df: pd.DataFrame, col1: str, col2: str) -> pd.Series:
 
 def detect_threshold_cross_above(df: pd.DataFrame, col: str, threshold: float) -> pd.Series:
     """Detect when column crosses above threshold ."""
-    return (df[col] >= threshold) & (df[col].shift(1) < threshold)
+    return (df[col] > threshold) & (df[col].shift(1) <= threshold)
 
 
 def detect_threshold_cross_below(df: pd.DataFrame, col: str, threshold: float) -> pd.Series:
@@ -68,7 +68,8 @@ def detect_threshold_cross_below(df: pd.DataFrame, col: str, threshold: float) -
 
 def is_at_lowest(df: pd.DataFrame, col: str, period: int) -> pd.Series:
     """Check if column is at lowest value in period ."""
-    return df[col].rolling(window=period, min_periods=period).min() == df[col]
+    rolling_min = df[col].rolling(window=period, min_periods=period).min()
+    return df[col] <= (rolling_min + 1e-9)
 
 
 def is_at_highest(df: pd.DataFrame, col: str, period: int) -> pd.Series:

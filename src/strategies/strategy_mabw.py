@@ -5,7 +5,8 @@ from backtester.strategy_base import (
     Strategy, 
     create_signal, 
     detect_crossover_above,
-    is_at_lowest
+    is_at_lowest,
+    detect_threshold_cross_above
 )
 from backtester.types_core import Signal, StrategyConfig
 from backtester.indicators import mabw, ema, atr
@@ -96,16 +97,18 @@ class MABWStrategy(Strategy):
         cross_cond = detect_crossover_above(data, 'EMA', 'MAB_UPPER')
         
         # MAB_WIDTH is at LLV
-        llv_cond = is_at_lowest(data, 'MAB_WIDTH', self.mabw_llv_period)
+        # llv_cond = is_at_lowest(data, 'MAB_WIDTH', self.mabw_llv_period)
+        llv_cond = (data['MAB_WIDTH'] <= data['MAB_LLV'] + 0.000001)
         
         return cross_cond & llv_cond
     
     def _detect_exit(self, data: pd.DataFrame) -> pd.Series:
         """Detect exit conditions (pure helper)."""
-        return (
-            (data['MAB_WIDTH'] > self.mab_width_critical) & 
-            (data['MAB_WIDTH'].shift(1) <= self.mab_width_critical)
-        )
+        # return (
+        #     (data['MAB_WIDTH'] > self.mab_width_critical) & 
+        #     (data['MAB_WIDTH'].shift(1) <= self.mab_width_critical)
+        # )
+        return detect_threshold_cross_above(data, 'MAB_WIDTH', self.mab_width_critical)
     
     def validate_config(self) -> bool:
         """Validate configuration."""
