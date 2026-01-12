@@ -20,7 +20,7 @@ Systematic rule-based strategies, backtesting, and performance evaluation.
 | Strategy | Description | Link |
 |:---------|:------------|:-----|
 | **Bollinger Mean-Reversion** | Classic mean-reversion with z-score entry/exit | [View](/systematic-strategies-legacy/legacy/c_001_tasc201905/c_001_tasc201905.html) |
-| **Bollinger + Candlesticks** | Band signals with pattern confirmation | [View](/dsystematic-strategies-legacy/legacy/c_002_tasc201910/c_002_tasc201910.html) |
+| **Bollinger + Candlesticks** | Band signals with pattern confirmation | [View](/systematic-strategies-legacy/legacy/c_002_tasc201910/c_002_tasc201910.html) |
 
 ---
 
@@ -29,8 +29,8 @@ Systematic rule-based strategies, backtesting, and performance evaluation.
 | Strategy | Description | Link |
 |:---------|:------------|:-----|
 | **Adaptive Moving Averages** | KAMA/FRAMA-based trend detection | [View](/dsystematic-strategies-legacy/legacy/c_003_tasc201804/c_003_tasc201804.html) |
-| **Weekly & Daily MACD** | Multi-timeframe trend alignment | [View](/dsystematic-strategies-legacy/legacy/c_007_tasc201712/c_007_tasc201712.html) |
-| **MAB/MABW System** | Band width expansion signals | [View](/dsystematic-strategies-legacy/legacy/c_005_tasc202108/c_005_tasc202108.html) |
+| **Weekly & Daily MACD** | Multi-timeframe trend alignment | [View](/systematic-strategies-legacy/legacy/c_007_tasc201712/c_007_tasc201712.html) |
+| **MAB/MABW System** | Band width expansion signals | [View](/systematic-strategies-legacy/legacy/c_005_tasc202108/c_005_tasc202108.html) |
 
 ---
 
@@ -38,8 +38,8 @@ Systematic rule-based strategies, backtesting, and performance evaluation.
 
 | Strategy | Description | Link |
 |:---------|:------------|:-----|
-| **VPN High-Volume Breakouts** | Price breakout + volume confirmation | [View](/dsystematic-strategies-legacy/legacy/c_004_tasc202104/c_004_tasc202104.html) |
-| **DMI Continuation Signals** | ADX trend strength + directional crossover | [View](/dsystematic-strategies-legacy/legacy/c_011_tasc202212/c_011_tasc202212.html) |
+| **VPN High-Volume Breakouts** | Price breakout + volume confirmation | [View](/systematic-strategies-legacy/legacy/c_004_tasc202104/c_004_tasc202104.html) |
+| **DMI Continuation Signals** | ADX trend strength + directional crossover | [View](/systematic-strategies-legacy/legacy/c_011_tasc202212/c_011_tasc202212.html) |
 
 ---
 
@@ -47,8 +47,8 @@ Systematic rule-based strategies, backtesting, and performance evaluation.
 
 | Strategy | Description | Link |
 |:---------|:------------|:-----|
-| **Soldiers & Crows** | Candlestick patterns + trend filter | [View](/dsystematic-strategies-legacy/legacy/c_006_tasc201710/c_006_tasc201710.html) |
-| **Stoch MACD + RS Composite** | Triple confirmation: momentum + relative strength | [View](/dsystematic-strategies-legacy/legacy/d_001_b38-b39-b40/d_001_b38-b39-b40.html) |
+| **Soldiers & Crows** | Candlestick patterns + trend filter | [View](/systematic-strategies-legacy/legacy/c_006_tasc201710/c_006_tasc201710.html) |
+| **Stoch MACD + RS Composite** | Triple confirmation: momentum + relative strength | [View](/systematic-strategies-legacy/legacy/d_001_b38-b39-b40/d_001_b38-b39-b40.html) |
 
 ---
 
