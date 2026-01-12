@@ -19,8 +19,8 @@ Systematic rule-based strategies, backtesting, and performance evaluation.
 
 | Strategy | Description | Link |
 |:---------|:------------|:-----|
-| **Bollinger Mean-Reversion** | Classic mean-reversion with z-score entry/exit | [View](/docs/alpha-research/strategies/c_001_tasc201905/c_001_tasc201905.html) |
-| **Bollinger + Candlesticks** | Band signals with pattern confirmation | [View](/docs/alpha-research/strategies/c_002_tasc201910/c_002_tasc201910.html) |
+| **Bollinger Mean-Reversion** | Classic mean-reversion with z-score entry/exit | [View](/systematic-strategies-legacy/legacy/c_001_tasc201905/c_001_tasc201905.html) |
+| **Bollinger + Candlesticks** | Band signals with pattern confirmation | [View](/dsystematic-strategies-legacy/legacy/c_002_tasc201910/c_002_tasc201910.html) |
 
 ---
 
@@ -28,9 +28,9 @@ Systematic rule-based strategies, backtesting, and performance evaluation.
 
 | Strategy | Description | Link |
 |:---------|:------------|:-----|
-| **Adaptive Moving Averages** | KAMA/FRAMA-based trend detection | [View](/docs/alpha-research/strategies/c_003_tasc201804/c_003_tasc201804.html) |
-| **Weekly & Daily MACD** | Multi-timeframe trend alignment | [View](/docs/alpha-research/strategies/c_007_tasc201712/c_007_tasc201712.html) |
-| **MAB/MABW System** | Band width expansion signals | [View](/docs/alpha-research/strategies/c_005_tasc202108/c_005_tasc202108.html) |
+| **Adaptive Moving Averages** | KAMA/FRAMA-based trend detection | [View](/dsystematic-strategies-legacy/legacy/c_003_tasc201804/c_003_tasc201804.html) |
+| **Weekly & Daily MACD** | Multi-timeframe trend alignment | [View](/dsystematic-strategies-legacy/legacy/c_007_tasc201712/c_007_tasc201712.html) |
+| **MAB/MABW System** | Band width expansion signals | [View](/dsystematic-strategies-legacy/legacy/c_005_tasc202108/c_005_tasc202108.html) |
 
 ---
 
@@ -38,8 +38,8 @@ Systematic rule-based strategies, backtesting, and performance evaluation.
 
 | Strategy | Description | Link |
 |:---------|:------------|:-----|
-| **VPN High-Volume Breakouts** | Price breakout + volume confirmation | [View](/docs/alpha-research/strategies/c_004_tasc202104/c_004_tasc202104.html) |
-| **DMI Continuation Signals** | ADX trend strength + directional crossover | [View](/docs/alpha-research/strategies/c_011_tasc202212/c_011_tasc202212.html) |
+| **VPN High-Volume Breakouts** | Price breakout + volume confirmation | [View](/dsystematic-strategies-legacy/legacy/c_004_tasc202104/c_004_tasc202104.html) |
+| **DMI Continuation Signals** | ADX trend strength + directional crossover | [View](/dsystematic-strategies-legacy/legacy/c_011_tasc202212/c_011_tasc202212.html) |
 
 ---
 
@@ -47,8 +47,8 @@ Systematic rule-based strategies, backtesting, and performance evaluation.
 
 | Strategy | Description | Link |
 |:---------|:------------|:-----|
-| **Soldiers & Crows** | Candlestick patterns + trend filter | [View](/docs/alpha-research/strategies/c_006_tasc201710/c_006_tasc201710.html) |
-| **Stoch MACD + RS Composite** | Triple confirmation: momentum + relative strength | [View](/docs/alpha-research/strategies/d_001_b38-b39-b40/d_001_b38-b39-b40.html) |
+| **Soldiers & Crows** | Candlestick patterns + trend filter | [View](/dsystematic-strategies-legacy/legacy/c_006_tasc201710/c_006_tasc201710.html) |
+| **Stoch MACD + RS Composite** | Triple confirmation: momentum + relative strength | [View](/dsystematic-strategies-legacy/legacy/d_001_b38-b39-b40/d_001_b38-b39-b40.html) |
 
 ---
 
